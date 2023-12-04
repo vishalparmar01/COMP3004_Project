@@ -1,6 +1,6 @@
-#include "CustomLedWidget.h"
+#include "Display.h"
 
-CustomLedWidget::CustomLedWidget()
+Display::Display()
 {
 
 }

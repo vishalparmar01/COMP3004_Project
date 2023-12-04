@@ -10,12 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     CustomLedWidget.cpp \
+    Display.cpp \
     LedWidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     CustomLedWidget.h \
+    Display.h \
     LedWidget.h \
     mainwindow.h
 

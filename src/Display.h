@@ -1,11 +1,11 @@
-#ifndef CUSTOMLEDWIDGET_H
-#define CUSTOMLEDWIDGET_H
+#ifndef DISPLAY_H
+#define DISPLAY_H
 
 
-class CustomLedWidget
+class Display
 {
 public:
-    CustomLedWidget();
+    Display();
 };
 
-#endif // CUSTOMLEDWIDGET_H
+#endif
