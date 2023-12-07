@@ -2,8 +2,6 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QPixmap>
-#include <QDebug>
-#include <QTimer>
 
 #include "LedWidget.h"
 
@@ -59,61 +57,60 @@ MainWindow::MainWindow(QWidget *parent)
     int h9 = ui->heart_label->height();
     ui->heart_label->setPixmap(pix9.scaled(w9,h9,Qt::KeepAspectRatio));
     
-    //comboBox text
-    ui->padType->addItem("Choose pads");
-    ui->padType->addItem("Adult pads");
-    ui->padType->addItem("Infant pads");
 
-    led1 = new LedWidget(this);
+
+    //comboBox text
+    ui->comboBox->addItem("Choose pads");
+    ui->comboBox->addItem("Adult pads");
+    ui->comboBox->addItem("Infant pads");
+
+
+    LedWidget *led1 = new LedWidget(this);
     ui->led_1->addWidget(led1);
     connect(ui->turnOnButton, &QPushButton::clicked, led1, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led1, &LedWidget::turnOff);
 
-    led2 = new LedWidget(this);
+    LedWidget *led2 = new LedWidget(this);
     ui->led_2->addWidget(led2);
     connect(ui->turnOnButton, &QPushButton::clicked, led2, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led2, &LedWidget::turnOff);
 
-    led3 = new LedWidget(this);
+    LedWidget *led3 = new LedWidget(this);
     ui->led_3->addWidget(led3);
     connect(ui->turnOnButton, &QPushButton::clicked, led3, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led3, &LedWidget::turnOff);
 
-    led4 = new LedWidget(this);
+    LedWidget *led4 = new LedWidget(this);
     ui->led_4->addWidget(led4);
     connect(ui->turnOnButton, &QPushButton::clicked, led4, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led4, &LedWidget::turnOff);
 
-    led5 = new LedWidget(this);
+    LedWidget *led5 = new LedWidget(this);
     ui->led_5->addWidget(led5);
     connect(ui->turnOnButton, &QPushButton::clicked, led5, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led5, &LedWidget::turnOff);
 
-    led6 = new LedWidget(this);
+    LedWidget *led6 = new LedWidget(this);
     ui->led_6->addWidget(led6);
     connect(ui->turnOnButton, &QPushButton::clicked, led6, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led6, &LedWidget::turnOff);
 
-    led7 = new LedWidget(this);
+    LedWidget *led7 = new LedWidget(this);
     ui->led_7->addWidget(led7);
     connect(ui->turnOnButton, &QPushButton::clicked, led7, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led7, &LedWidget::turnOff);
 
-    led8 = new LedWidget(this);
+    LedWidget *led8 = new LedWidget(this);
     ui->led_8->addWidget(led8);
     connect(ui->turnOnButton, &QPushButton::clicked, led8, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led8, &LedWidget::turnOff);
 
-    led9 = new LedWidget(this);
+    LedWidget *led9 = new LedWidget(this);
     ui->led_9->addWidget(led9);
     connect(ui->turnOnButton, &QPushButton::clicked, led9, &LedWidget::turnOn);
     connect(ui->turnOffButton, &QPushButton::clicked, led9, &LedWidget::turnOff);
 
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(handleTime()));
-
-    connect(ui->power_on, SIGNAL(clicked()), this, SLOT(deviceOn()));
 }
 
 
@@ -131,91 +128,4 @@ void MainWindow::on_electrode_pads_stateChanged(int arg1)
         QMessageBox::information(this, "title", "The electrode pads are not placed");
     }
 }
-
-void MainWindow::handleTime() {
-    timeCount+=1;
-    ui->elapsedTime->display(timeCount);
-}
-
-void MainWindow::stayCalm() {ui->display->setText("STAY CALM"); }
-
-void MainWindow::checkResponsiveness() { ui->display->setText("CHECK RESPONSIVENESS"); }
-
-void MainWindow::callForHelp() { ui->display->setText("CALL FOR HELP"); }
-
-void MainWindow::usePass() { ui->display->setText("USE PASS"); }
-
-void MainWindow::checkBreathing() { ui->display->setText("CHECK BREATHING"); }
-
-void MainWindow::attachPads() { ui->display->setText("ATTACH PADS"); }
-
-void MainWindow::padsAttached() {  ui->display->setText("PADS ALREADY ATTACHED"); }
-
-void MainWindow::outOfBattery() {  ui->display->setText("UNIT FAILED: CHANGE BATTERIES"); }
-
-void MainWindow::resetDisplay() { ui->display->setText(""); }
-
-void MainWindow::deviceOn() {
-    timer->start(2000);
-    // Check if there is enough battery to provide 3 Shocks.
-    qDebug() << battery->getBattery();
-    if (battery->getBattery() >= 47) {
-        qDebug() << "Performing Self-Tests: ";
-
-        qDebug() << "BATTERY TEST: PASSED";
-        qDebug() << "DEFIBRILLATION ELECTRODED CONNECTION TEST: PASSED";
-        qDebug() << "ECG CIRCUITRY TEST: PASSED";
-        qDebug() << "CHARGE & DISCHARGE CIRCUITRY TEST: PASSED";
-        qDebug() << "MICROPROCESSOR HARDWARE/SOFTWARE TEST : PASSED";
-        qDebug() << "CPR CIRCUITRY TEST: PASSED";
-
-        // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
-
-        ui->display->setText("UNIT OK");
-
-        if (!(ui->electrode_pads->isChecked())) {
-            QTimer::singleShot(3000, this, SLOT(stayCalm()));
-
-            // CHECK RESPONSIVENESS
-            QTimer::singleShot(10000, led1, &LedWidget::turnOn);
-            QTimer::singleShot(10000, this, SLOT(checkResponsiveness()));
-            QTimer::singleShot(15000, led1, &LedWidget::turnOff);
-            QTimer::singleShot(15000, this, SLOT(resetDisplay()));
-
-            // CALL FOR HELP
-            QTimer::singleShot(25000, led2, &LedWidget::turnOn);
-            QTimer::singleShot(25000, this, SLOT(callForHelp()));
-            QTimer::singleShot(30000, led2, &LedWidget::turnOff);
-            QTimer::singleShot(30000, this, SLOT(resetDisplay()));
-
-            // USE PASS
-            QTimer::singleShot(40000, led3, &LedWidget::turnOn);
-            QTimer::singleShot(40000, this, SLOT(usePass()));
-            QTimer::singleShot(45000, led3, &LedWidget::turnOff);
-            QTimer::singleShot(45000, this, SLOT(resetDisplay()));
-
-            // CHECK BREATHING
-            QTimer::singleShot(55000, led4, &LedWidget::turnOn);
-            QTimer::singleShot(55000, this, SLOT(checkBreathing()));
-            QTimer::singleShot(60000, led4, &LedWidget::turnOff);
-            QTimer::singleShot(60000, this, SLOT(resetDisplay()));
-
-            // ATTACH PADS
-            QTimer::singleShot(70000, led5, &LedWidget::turnOn);
-            QTimer::singleShot(70000, this, SLOT(attachPads()));
-            QTimer::singleShot(75000, led5, &LedWidget::turnOff);
-            QTimer::singleShot(75000, this, SLOT(resetDisplay()));
-        }
-        else {
-            QTimer::singleShot(3000, led5, &LedWidget::turnOn);
-            QTimer::singleShot(3000, this, SLOT(padsAttached()));
-            QTimer::singleShot(8000, led5, &LedWidget::turnOff);
-            qDebug() << "\nPads already attached move to next step";
-        }
-    }
-    else {
-        QTimer::singleShot(3000, this, SLOT(outOfBattery()));
-    }
-}
-
 
