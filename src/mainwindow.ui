@@ -61,7 +61,7 @@
       <string>Off</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="padType">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -84,7 +84,7 @@
       <string>Place Electrode Pads</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="responses">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -563,15 +563,15 @@
       <rect>
        <x>220</x>
        <y>150</y>
-       <width>256</width>
-       <height>111</height>
+       <width>261</width>
+       <height>121</height>
       </rect>
      </property>
     </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>260</x>
+       <x>300</x>
        <y>200</y>
        <width>171</width>
        <height>41</height>
@@ -605,6 +605,36 @@
      </property>
      <property name="text">
       <string>ELPS. TIME</string>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="shocks">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>180</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="elapsedTime">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>180</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="display">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>230</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
      </property>
     </widget>
    </widget>
