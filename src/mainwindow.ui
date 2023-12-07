@@ -61,7 +61,7 @@
       <string>Off</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="padType">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -561,17 +561,17 @@
     <widget class="QTextBrowser" name="textBrowser">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>210</x>
        <y>150</y>
-       <width>256</width>
-       <height>111</height>
+       <width>271</width>
+       <height>121</height>
       </rect>
      </property>
     </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>260</x>
+       <x>300</x>
        <y>200</y>
        <width>171</width>
        <height>41</height>
@@ -584,8 +584,8 @@
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>160</y>
+       <x>220</x>
+       <y>150</y>
        <width>81</width>
        <height>17</height>
       </rect>
@@ -597,14 +597,44 @@
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
-       <x>391</x>
-       <y>160</y>
+       <x>400</x>
+       <y>150</y>
        <width>71</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>ELPS. TIME</string>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="shocks">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>170</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="elapsedTime">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>170</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="display">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>230</y>
+       <width>231</width>
+       <height>31</height>
+      </rect>
      </property>
     </widget>
    </widget>
