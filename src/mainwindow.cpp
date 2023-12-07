@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //images for each step in AED
+    //****************************images for each step in AED***************************
     QPixmap pix(":/img/img/label_1.png");
     int w = ui->label_1->width();
     int h = ui->label_1->height();
@@ -58,57 +58,82 @@ MainWindow::MainWindow(QWidget *parent)
     int w9 = ui->heart_label->width();
     int h9 = ui->heart_label->height();
     ui->heart_label->setPixmap(pix9.scaled(w9,h9,Qt::KeepAspectRatio));
+
+    //*****************ECG Graphs below*******************//
+
+    QPixmap pix10(":/img/img/sinus.png");
+    int w10 = ui->ecg_label->width();
+    int h10 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix10.scaled(w10,h10,Qt::KeepAspectRatio));
+
+    /*
+    QPixmap pix11(":/img/img/asystole.png");
+    int w11 = ui->ecg_label->width();
+    int h11 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix11.scaled(w11,h11,Qt::KeepAspectRatio));
+
+    QPixmap pix12(":/img/img/vf.png");
+    int w12 = ui->ecg_label->width();
+    int h12 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix12.scaled(w12,h12,Qt::KeepAspectRatio));
+
+    QPixmap pix13(":/img/img/vt.png");
+    int w13 = ui->ecg_label->width();
+    int h13 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
+*/
+
+    //*********************************SELF TEST IMAGES************************//
+
+
+    /*
+    QPixmap pix15(":/img/img/self_green.jpeg");
+    int w15 = ui->self_test_label->width();
+    int h15 = ui->self_test_label->height();
+    ui->self_test_label->setPixmap(pix15.scaled(w15,h15,Qt::KeepAspectRatio));
+    */
+
+    //*******************************************************************//
     
-    //comboBox text
+    //dfibs pads drop box
     ui->padType->addItem("Choose pads");
     ui->padType->addItem("Adult pads");
     ui->padType->addItem("Infant pads");
 
+    //compressions dropbox
+    ui->compression_type->addItem("2-2.25 inches");
+    ui->compression_type->addItem("<2 inches");
+    ui->compression_type->addItem("<0.75 inches");
+
+    //********************LED LIGHTS WIDGET*************************//
     led1 = new LedWidget(this);
     ui->led_1->addWidget(led1);
-    connect(ui->turnOnButton, &QPushButton::clicked, led1, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led1, &LedWidget::turnOff);
 
     led2 = new LedWidget(this);
     ui->led_2->addWidget(led2);
-    connect(ui->turnOnButton, &QPushButton::clicked, led2, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led2, &LedWidget::turnOff);
 
     led3 = new LedWidget(this);
     ui->led_3->addWidget(led3);
-    connect(ui->turnOnButton, &QPushButton::clicked, led3, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led3, &LedWidget::turnOff);
 
     led4 = new LedWidget(this);
     ui->led_4->addWidget(led4);
-    connect(ui->turnOnButton, &QPushButton::clicked, led4, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led4, &LedWidget::turnOff);
 
     led5 = new LedWidget(this);
     ui->led_5->addWidget(led5);
-    connect(ui->turnOnButton, &QPushButton::clicked, led5, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led5, &LedWidget::turnOff);
 
     led6 = new LedWidget(this);
     ui->led_6->addWidget(led6);
-    connect(ui->turnOnButton, &QPushButton::clicked, led6, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led6, &LedWidget::turnOff);
 
     led7 = new LedWidget(this);
     ui->led_7->addWidget(led7);
-    connect(ui->turnOnButton, &QPushButton::clicked, led7, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led7, &LedWidget::turnOff);
 
     led8 = new LedWidget(this);
     ui->led_8->addWidget(led8);
-    connect(ui->turnOnButton, &QPushButton::clicked, led8, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led8, &LedWidget::turnOff);
 
     led9 = new LedWidget(this);
     ui->led_9->addWidget(led9);
-    connect(ui->turnOnButton, &QPushButton::clicked, led9, &LedWidget::turnOn);
-    connect(ui->turnOffButton, &QPushButton::clicked, led9, &LedWidget::turnOff);
 
+    //*******************************************************************************//
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(handleTime()));
@@ -137,23 +162,50 @@ void MainWindow::handleTime() {
     ui->elapsedTime->display(timeCount);
 }
 
-void MainWindow::stayCalm() {ui->display->setText("STAY CALM"); }
+void MainWindow::stayCalm() {
+    ui->display->setText("STAY CALM");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::checkResponsiveness() { ui->display->setText("CHECK RESPONSIVENESS"); }
+void MainWindow::checkResponsiveness() {
+    ui->display->setText("CHECK RESPONSIVENESS");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::callForHelp() { ui->display->setText("CALL FOR HELP"); }
+void MainWindow::callForHelp() {
+    ui->display->setText("CALL FOR HELP");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::usePass() { ui->display->setText("USE PASS"); }
+void MainWindow::usePass() {
+    ui->display->setText("USE PASS");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::checkBreathing() { ui->display->setText("CHECK BREATHING"); }
+void MainWindow::checkBreathing() {
+    ui->display->setText("CHECK BREATHING");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::attachPads() { ui->display->setText("ATTACH PADS"); }
+void MainWindow::attachPads() {
+    ui->display->setText("ATTACH PADS");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::padsAttached() {  ui->display->setText("PADS ALREADY ATTACHED"); }
+void MainWindow::padsAttached() {
+    ui->display->setText("PADS ALREADY ATTACHED");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::outOfBattery() {  ui->display->setText("UNIT FAILED: CHANGE BATTERIES"); }
+void MainWindow::outOfBattery() {
+    ui->display->setText("UNIT FAILED: CHANGE BATTERIES");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
-void MainWindow::resetDisplay() { ui->display->setText(""); }
+void MainWindow::resetDisplay() {
+    ui->display->setText("");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
 
 void MainWindow::deviceOn() {
     timer->start(2000);
@@ -172,6 +224,13 @@ void MainWindow::deviceOn() {
         // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
 
         ui->display->setText("UNIT OK");
+        ui->display->setAlignment(Qt::AlignCenter);
+
+        QPixmap pix14(":/img/img/self_green.png");
+        int w14 = ui->self_test_label->width();
+        int h14 = ui->self_test_label->height();
+        ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
 
         if (!(ui->electrode_pads->isChecked())) {
             QTimer::singleShot(3000, this, SLOT(stayCalm()));

@@ -10,5 +10,17 @@
         <file>img/red.png</file>
         <file>img/heart.png</file>
         <file>img/label_4.jpg</file>
+        <file>img/asystole.png</file>
+        <file>img/sinus.png</file>
+        <file>img/vf.png</file>
+        <file>img/vt.png</file>
+        <file>img/self_green.png</file>
+        <file>img/self_red.jpg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>img/asystole.png</file>
+        <file>img/sinus.png</file>
+        <file>img/vf.png</file>
+        <file>img/vt.png</file>
     </qresource>
 </RCC>
