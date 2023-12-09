@@ -101,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->padType->addItem("INFANT PADS");
 
     //compressions dropbox
+    ui->compression_type->addItem("Choose Depth");
     ui->compression_type->addItem("2-2.25 inches");
     ui->compression_type->addItem("<2 inches");
     ui->compression_type->addItem("<0.75 inches");
@@ -141,6 +142,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->power_on, SIGNAL(clicked()), this, SLOT(deviceOn()));
 
     connect(ui->padType, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPadType()));
+
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(checkCompressions()));
 }
 
 
@@ -212,6 +215,16 @@ void MainWindow::resetDisplay() {
 
 void MainWindow::awayFromPatient() {
     ui->display->setText("DON'T TOUCH THE PATIENT - ANALYZING");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::takeBreaths() {
+    ui->display->setText("2 BREATHS");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::stopCPR() {
+    ui->display->setText("STOP CPR");
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
@@ -303,6 +316,29 @@ void MainWindow::selectPadType() {
     }
     else {
         qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
+    }
+}
+
+void MainWindow::checkCompressions(){
+    QTimer::singleShot(3000, led6, &LedWidget::turnOff);
+    QTimer::singleShot(3000, this, SLOT(resetDisplay()));
+    QTimer::singleShot(3000, led7, &LedWidget::turnOn);
+    QString comp=ui->compression_type->currentText();
+    if(comp=="2-2.25 inches"){
+        ui->display->setText("GOOD COMPRESSION");
+        compressionCount+=1;
+    }else if(comp=="<2 inches"){
+        ui->display->setText("PUSH HARDER");
+        compressionCount+=1;
+    }else if(comp=="<0.75 inches"){
+        ui->display->setText("CONTINUE CPR");
+    }
+    if(compressionCount >= 30){
+        compressionCount=0;
+        QTimer::singleShot(4000, led7, &LedWidget::turnOff);
+        QTimer::singleShot(4000, this, SLOT(takeBreaths()));
+        QTimer::singleShot(5000, led8, &LedWidget::turnOn);
+        QTimer::singleShot(10000, this, SLOT(stopCPR()));
     }
 }
 

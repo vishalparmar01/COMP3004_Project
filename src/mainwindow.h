@@ -34,6 +34,9 @@ private slots:
     void deviceOn();
     void selectPadType();
     void awayFromPatient();
+    void checkCompressions();
+    void takeBreaths();
+    void stopCPR();
 
 
 
@@ -53,6 +56,7 @@ private:
     QTimer* timer;
     QString pads;
     AED *aed = new AED();
+    int compressionCount=0;
 
 
 };
