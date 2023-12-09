@@ -32,6 +32,8 @@ private slots:
     void outOfBattery();
     void resetDisplay();
     void deviceOn();
+    void deviceOff();
+    void onPowerOffTimeout();
     void selectPadType();
     void awayFromPatient();
     void checkCompressions();
@@ -54,10 +56,10 @@ private:
     LedWidget *led8;
     LedWidget *led9;
     QTimer* timer;
+    QTimer* powerOffTimer;
     QString pads;
     AED *aed = new AED();
+    bool powerOnButtonClicked;
     int compressionCount=0;
-
-
 };
 #endif // MAINWINDOW_H
