@@ -31,6 +31,7 @@ private slots:
     void padsAttached();
     void outOfBattery();
     void resetDisplay();
+    void handleStateSwitch();
     void deviceOn();
     void deviceOff();
     void onPowerOffTimeout();
@@ -46,6 +47,7 @@ private:
     Ui::MainWindow *ui;
     Battery *battery = new Battery(1000);
     int timeCount = 0;
+    int stateCount = 1;
     LedWidget *led1;
     LedWidget *led2;
     LedWidget *led3;
@@ -57,6 +59,7 @@ private:
     LedWidget *led9;
     QTimer* timer;
     QTimer* powerOffTimer;
+    QTimer* stateSwitchTimer;
     QString pads;
     AED *aed = new AED();
     bool powerOnButtonClicked;
