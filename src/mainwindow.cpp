@@ -136,11 +136,18 @@ MainWindow::MainWindow(QWidget *parent)
     //*******************************************************************************//
 
     timer = new QTimer(this);
+
+    powerOffTimer = new QTimer(this);
+
     connect(timer, SIGNAL(timeout()), this, SLOT(handleTime()));
+
+    connect(powerOffTimer, SIGNAL(timeout()), this, SLOT(onPowerOffTimeout()));
 
     connect(ui->power_on, SIGNAL(clicked()), this, SLOT(deviceOn()));
 
     connect(ui->padType, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPadType()));
+
+    connect(ui->power_off, SIGNAL(clicked()), this, SLOT(deviceOff()));
 }
 
 
@@ -216,9 +223,12 @@ void MainWindow::awayFromPatient() {
 }
 
 void MainWindow::deviceOn() {
+    //Setting the flag to true
+    powerOnButtonClicked = true;
+    //Start the timer
     timer->start(1000);
     // Check if there is enough battery to provide 3 Shocks.
-    if (battery->getBattery() >= 940) {
+    if (battery->getBattery() >= 940 && powerOnButtonClicked) {
         qDebug() << "Performing Self-Tests: ";
 
         qDebug() << "BATTERY TEST: PASSED";
@@ -230,45 +240,58 @@ void MainWindow::deviceOn() {
 
         // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
 
-        ui->display->setText("UNIT OK");
-        ui->display->setAlignment(Qt::AlignCenter);
+        if(powerOnButtonClicked){
+            ui->display->setText("UNIT OK");
+            ui->display->setAlignment(Qt::AlignCenter);
 
         QPixmap pix14(":/img/img/self_green.png");
         int w14 = ui->self_test_label->width();
         int h14 = ui->self_test_label->height();
         ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+        }
 
 
-        if (!(ui->electrode_pads->isChecked())) {
+        if (!(ui->electrode_pads->isChecked()) && powerOnButtonClicked) {
             QTimer::singleShot(3000, this, SLOT(stayCalm()));
 
+
+            if(powerOnButtonClicked){
             // CHECK RESPONSIVENESS
-            QTimer::singleShot(6000, led1, &LedWidget::turnOn);
-            QTimer::singleShot(6000, this, SLOT(checkResponsiveness()));
-            QTimer::singleShot(11000, led1, &LedWidget::turnOff);
-            QTimer::singleShot(11000, this, SLOT(resetDisplay()));
+                QTimer::singleShot(6000, led1, &LedWidget::turnOn);
+                QTimer::singleShot(6000, this, SLOT(checkResponsiveness()));
+                QTimer::singleShot(11000, led1, &LedWidget::turnOff);
+                QTimer::singleShot(11000, this, SLOT(resetDisplay()));
+            }
 
-            // CALL FOR HELP
-            QTimer::singleShot(12000, led2, &LedWidget::turnOn);
-            QTimer::singleShot(12000, this, SLOT(callForHelp()));
-            QTimer::singleShot(17000, led2, &LedWidget::turnOff);
-            QTimer::singleShot(17000, this, SLOT(resetDisplay()));
+            if(powerOnButtonClicked){
+                // CALL FOR HELP
+                QTimer::singleShot(12000, led2, &LedWidget::turnOn);
+                QTimer::singleShot(12000, this, SLOT(callForHelp()));
+                QTimer::singleShot(17000, led2, &LedWidget::turnOff);
+                QTimer::singleShot(17000, this, SLOT(resetDisplay()));
+            }
 
-            // USE PASS
-            QTimer::singleShot(18000, led3, &LedWidget::turnOn);
-            QTimer::singleShot(18000, this, SLOT(usePass()));
-            QTimer::singleShot(23000, led3, &LedWidget::turnOff);
-            QTimer::singleShot(23000, this, SLOT(resetDisplay()));
+            if(powerOnButtonClicked){
+                // USE PASS
+                QTimer::singleShot(18000, led3, &LedWidget::turnOn);
+                QTimer::singleShot(18000, this, SLOT(usePass()));
+                QTimer::singleShot(23000, led3, &LedWidget::turnOff);
+                QTimer::singleShot(23000, this, SLOT(resetDisplay()));
+            }
 
-            // CHECK BREATHING
-            QTimer::singleShot(24000, led4, &LedWidget::turnOn);
-            QTimer::singleShot(24000, this, SLOT(checkBreathing()));
-            QTimer::singleShot(29000, led4, &LedWidget::turnOff);
-            QTimer::singleShot(29000, this, SLOT(resetDisplay()));
+            if(powerOnButtonClicked){
+                // CHECK BREATHING
+                QTimer::singleShot(24000, led4, &LedWidget::turnOn);
+                QTimer::singleShot(24000, this, SLOT(checkBreathing()));
+                QTimer::singleShot(29000, led4, &LedWidget::turnOff);
+                QTimer::singleShot(29000, this, SLOT(resetDisplay()));
+            }
 
-            // ATTACH PADS
-            QTimer::singleShot(30000, led5, &LedWidget::turnOn);
-            QTimer::singleShot(30000, this, SLOT(attachPads()));
+            if(powerOnButtonClicked){
+                // ATTACH PADS
+                QTimer::singleShot(30000, led5, &LedWidget::turnOn);
+                QTimer::singleShot(30000, this, SLOT(attachPads()));
+            }
 
         }
         else {
@@ -306,6 +329,49 @@ void MainWindow::selectPadType() {
     }
 }
 
+void MainWindow::deviceOff() {
 
+    qDebug() << "Turning AED Off";
+    resetDisplay();
 
+    //Set the flag to false
+    powerOnButtonClicked = false;
 
+    //disconnect existing Timeout Signal if any
+    //disconnect(powerOffTimer, SIGNAL(timeout()), this, SLOT(onPowerOffTimeout()));
+
+    //connect the Timeout Signal to a new SLOT
+    //connect(powerOffTimer, SIGNAL(timeout()), this, SLOT(onPowerOffTimeout()));
+
+    //Start the timer for 5 seconds
+    powerOffTimer->start(5000);
+
+}
+
+void MainWindow::onPowerOffTimeout() {
+    //This function will be called if the powerOffTimer runs out
+
+    //Check if power_On Button was clicked within the 5 seconds
+    if(powerOnButtonClicked){
+        qDebug() << "AED is turned back on within 5 seconds";
+    }
+    else{
+        //Turn off all the LED
+        QTimer::singleShot(1000, led1, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led2, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led3, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led4, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led5, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led6, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led7, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led8, &LedWidget::turnOff);
+        QTimer::singleShot(1000, led9, &LedWidget::turnOff);
+        //Reset the Elapsed Time
+        timeCount = 0;
+        timer->stop();
+        qDebug() << "AED is turned off for more than 5 seconds";
+    }
+
+    //Stop the timer
+    powerOffTimer->stop();
+}
