@@ -36,6 +36,9 @@ private slots:
     void onPowerOffTimeout();
     void selectPadType();
     void awayFromPatient();
+    void checkCompressions();
+    void takeBreaths();
+    void stopCPR();
 
 
 
@@ -57,7 +60,6 @@ private:
     QString pads;
     AED *aed = new AED();
     bool powerOnButtonClicked;
-
-
+    int compressionCount=0;
 };
 #endif // MAINWINDOW_H

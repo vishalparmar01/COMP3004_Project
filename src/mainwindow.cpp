@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //*****************ECG Graphs below*******************//
 
-    QPixmap pix10(":/img/img/sinus.png");
+    QPixmap pix10(":/img/img/reset.png");
     int w10 = ui->ecg_label->width();
     int h10 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix10.scaled(w10,h10,Qt::KeepAspectRatio));
@@ -78,6 +78,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ecg_label->setPixmap(pix12.scaled(w12,h12,Qt::KeepAspectRatio));
 
     QPixmap pix13(":/img/img/vt.png");
+    int w13 = ui->ecg_label->width();
+    int h13 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
+
+    QPixmap pix14(":/img/img/vt.png");
     int w13 = ui->ecg_label->width();
     int h13 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
@@ -101,6 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->padType->addItem("INFANT PADS");
 
     //compressions dropbox
+    ui->compression_type->addItem("Choose Depth");
     ui->compression_type->addItem("2-2.25 inches");
     ui->compression_type->addItem("<2 inches");
     ui->compression_type->addItem("<0.75 inches");
@@ -148,6 +154,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->padType, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPadType()));
 
     connect(ui->power_off, SIGNAL(clicked()), this, SLOT(deviceOff()));
+
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(checkCompressions()));
 }
 
 
@@ -222,6 +230,16 @@ void MainWindow::awayFromPatient() {
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
+void MainWindow::takeBreaths() {
+    ui->display->setText("2 BREATHS");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::stopCPR() {
+    ui->display->setText("STOP CPR");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
 void MainWindow::deviceOn() {
     //Setting the flag to true
     powerOnButtonClicked = true;
@@ -244,7 +262,7 @@ void MainWindow::deviceOn() {
             ui->display->setText("UNIT OK");
             ui->display->setAlignment(Qt::AlignCenter);
 
-        QPixmap pix14(":/img/img/self_green.png");
+        QPixmap pix14(":/img/img/reset.png");
         int w14 = ui->self_test_label->width();
         int h14 = ui->self_test_label->height();
         ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
@@ -326,6 +344,29 @@ void MainWindow::selectPadType() {
     }
     else {
         qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
+    }
+}
+
+void MainWindow::checkCompressions(){
+    QTimer::singleShot(3000, led6, &LedWidget::turnOff);
+    QTimer::singleShot(3000, this, SLOT(resetDisplay()));
+    QTimer::singleShot(3000, led7, &LedWidget::turnOn);
+    QString comp=ui->compression_type->currentText();
+    if(comp=="2-2.25 inches"){
+        ui->display->setText("GOOD COMPRESSION");
+        compressionCount+=1;
+    }else if(comp=="<2 inches"){
+        ui->display->setText("PUSH HARDER");
+        compressionCount+=1;
+    }else if(comp=="<0.75 inches"){
+        ui->display->setText("CONTINUE CPR");
+    }
+    if(compressionCount >= 30){
+        compressionCount=0;
+        QTimer::singleShot(4000, led7, &LedWidget::turnOff);
+        QTimer::singleShot(4000, this, SLOT(takeBreaths()));
+        QTimer::singleShot(5000, led8, &LedWidget::turnOn);
+        QTimer::singleShot(10000, this, SLOT(stopCPR()));
     }
 }
 
