@@ -16,6 +16,7 @@
         <file>img/vt.png</file>
         <file>img/self_green.png</file>
         <file>img/self_red.jpg</file>
+        <file>img/reset.png</file>
     </qresource>
     <qresource prefix="/">
         <file>img/asystole.png</file>

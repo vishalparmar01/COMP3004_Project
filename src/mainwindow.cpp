@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //*****************ECG Graphs below*******************//
 
-    QPixmap pix10(":/img/img/sinus.png");
+    QPixmap pix10(":/img/img/reset.png");
     int w10 = ui->ecg_label->width();
     int h10 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix10.scaled(w10,h10,Qt::KeepAspectRatio));
@@ -78,6 +78,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ecg_label->setPixmap(pix12.scaled(w12,h12,Qt::KeepAspectRatio));
 
     QPixmap pix13(":/img/img/vt.png");
+    int w13 = ui->ecg_label->width();
+    int h13 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
+
+    QPixmap pix14(":/img/img/vt.png");
     int w13 = ui->ecg_label->width();
     int h13 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
@@ -246,7 +251,7 @@ void MainWindow::deviceOn() {
         ui->display->setText("UNIT OK");
         ui->display->setAlignment(Qt::AlignCenter);
 
-        QPixmap pix14(":/img/img/self_green.png");
+        QPixmap pix14(":/img/img/reset.png");
         int w14 = ui->self_test_label->width();
         int h14 = ui->self_test_label->height();
         ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
