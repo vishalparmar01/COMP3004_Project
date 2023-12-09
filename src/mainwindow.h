@@ -5,6 +5,7 @@
 #include <LedWidget.h>
 #include <QTimer>
 #include <battery.h>
+#include <aed.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,11 +32,14 @@ private slots:
     void outOfBattery();
     void resetDisplay();
     void deviceOn();
+    void selectPadType();
+    void awayFromPatient();
+
 
 
 private:
     Ui::MainWindow *ui;
-    Battery *battery = new Battery(100);
+    Battery *battery = new Battery(1000);
     int timeCount = 0;
     LedWidget *led1;
     LedWidget *led2;
@@ -47,6 +51,8 @@ private:
     LedWidget *led8;
     LedWidget *led9;
     QTimer* timer;
+    QString pads;
+    AED *aed = new AED();
 
 
 };

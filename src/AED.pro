@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     Display.cpp \
     LedWidget.cpp \
+    aed.cpp \
     battery.cpp \
     main.cpp \
     mainwindow.cpp
@@ -18,6 +19,7 @@ SOURCES += \
 HEADERS += \
     Display.h \
     LedWidget.h \
+    aed.h \
     battery.h \
     mainwindow.h
 

@@ -97,8 +97,8 @@ MainWindow::MainWindow(QWidget *parent)
     
     //dfibs pads drop box
     ui->padType->addItem("Choose pads");
-    ui->padType->addItem("Adult pads");
-    ui->padType->addItem("Infant pads");
+    ui->padType->addItem("ADULT PADS");
+    ui->padType->addItem("INFANT PADS");
 
     //compressions dropbox
     ui->compression_type->addItem("2-2.25 inches");
@@ -139,6 +139,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer, SIGNAL(timeout()), this, SLOT(handleTime()));
 
     connect(ui->power_on, SIGNAL(clicked()), this, SLOT(deviceOn()));
+
+    connect(ui->padType, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPadType()));
 }
 
 
@@ -190,10 +192,11 @@ void MainWindow::checkBreathing() {
 void MainWindow::attachPads() {
     ui->display->setText("ATTACH PADS");
     ui->display->setAlignment(Qt::AlignCenter);
+    qDebug() << "Please choose PADS to attach";
 }
 
 void MainWindow::padsAttached() {
-    ui->display->setText("PADS ALREADY ATTACHED");
+    ui->display->setText(pads + " ATTACHED");
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
@@ -207,11 +210,15 @@ void MainWindow::resetDisplay() {
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
+void MainWindow::awayFromPatient() {
+    ui->display->setText("DON'T TOUCH THE PATIENT - ANALYZING");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
 void MainWindow::deviceOn() {
-    timer->start(2000);
+    timer->start(1000);
     // Check if there is enough battery to provide 3 Shocks.
-    qDebug() << battery->getBattery();
-    if (battery->getBattery() >= 47) {
+    if (battery->getBattery() >= 940) {
         qDebug() << "Performing Self-Tests: ";
 
         qDebug() << "BATTERY TEST: PASSED";
@@ -236,45 +243,69 @@ void MainWindow::deviceOn() {
             QTimer::singleShot(3000, this, SLOT(stayCalm()));
 
             // CHECK RESPONSIVENESS
-            QTimer::singleShot(10000, led1, &LedWidget::turnOn);
-            QTimer::singleShot(10000, this, SLOT(checkResponsiveness()));
-            QTimer::singleShot(15000, led1, &LedWidget::turnOff);
-            QTimer::singleShot(15000, this, SLOT(resetDisplay()));
+            QTimer::singleShot(6000, led1, &LedWidget::turnOn);
+            QTimer::singleShot(6000, this, SLOT(checkResponsiveness()));
+            QTimer::singleShot(11000, led1, &LedWidget::turnOff);
+            QTimer::singleShot(11000, this, SLOT(resetDisplay()));
 
             // CALL FOR HELP
-            QTimer::singleShot(25000, led2, &LedWidget::turnOn);
-            QTimer::singleShot(25000, this, SLOT(callForHelp()));
-            QTimer::singleShot(30000, led2, &LedWidget::turnOff);
-            QTimer::singleShot(30000, this, SLOT(resetDisplay()));
+            QTimer::singleShot(12000, led2, &LedWidget::turnOn);
+            QTimer::singleShot(12000, this, SLOT(callForHelp()));
+            QTimer::singleShot(17000, led2, &LedWidget::turnOff);
+            QTimer::singleShot(17000, this, SLOT(resetDisplay()));
 
             // USE PASS
-            QTimer::singleShot(40000, led3, &LedWidget::turnOn);
-            QTimer::singleShot(40000, this, SLOT(usePass()));
-            QTimer::singleShot(45000, led3, &LedWidget::turnOff);
-            QTimer::singleShot(45000, this, SLOT(resetDisplay()));
+            QTimer::singleShot(18000, led3, &LedWidget::turnOn);
+            QTimer::singleShot(18000, this, SLOT(usePass()));
+            QTimer::singleShot(23000, led3, &LedWidget::turnOff);
+            QTimer::singleShot(23000, this, SLOT(resetDisplay()));
 
             // CHECK BREATHING
-            QTimer::singleShot(55000, led4, &LedWidget::turnOn);
-            QTimer::singleShot(55000, this, SLOT(checkBreathing()));
-            QTimer::singleShot(60000, led4, &LedWidget::turnOff);
-            QTimer::singleShot(60000, this, SLOT(resetDisplay()));
+            QTimer::singleShot(24000, led4, &LedWidget::turnOn);
+            QTimer::singleShot(24000, this, SLOT(checkBreathing()));
+            QTimer::singleShot(29000, led4, &LedWidget::turnOff);
+            QTimer::singleShot(29000, this, SLOT(resetDisplay()));
 
             // ATTACH PADS
-            QTimer::singleShot(70000, led5, &LedWidget::turnOn);
-            QTimer::singleShot(70000, this, SLOT(attachPads()));
-            QTimer::singleShot(75000, led5, &LedWidget::turnOff);
-            QTimer::singleShot(75000, this, SLOT(resetDisplay()));
+            QTimer::singleShot(30000, led5, &LedWidget::turnOn);
+            QTimer::singleShot(30000, this, SLOT(attachPads()));
+
         }
         else {
+            pads = ui->padType->currentText();
             QTimer::singleShot(3000, led5, &LedWidget::turnOn);
             QTimer::singleShot(3000, this, SLOT(padsAttached()));
             QTimer::singleShot(8000, led5, &LedWidget::turnOff);
-            qDebug() << "\nPads already attached move to next step";
+            qDebug() << "\n" << pads + " already attached -> Move to next step";
+            aed->setShockValues(pads);
         }
     }
     else {
+        QPixmap pix14(":/img/img/self_red.jpg");
+        int w14 = ui->self_test_label->width();
+        int h14 = ui->self_test_label->height();
+        ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+        qDebug() << "SELF TEST FAILED";
         QTimer::singleShot(3000, this, SLOT(outOfBattery()));
+        timer->stop();
     }
 }
+
+void MainWindow::selectPadType() {
+    QTimer::singleShot(3000, led5, &LedWidget::turnOff);
+    QTimer::singleShot(3000, this, SLOT(resetDisplay()));
+    pads = ui->padType->currentText();
+    if (aed->setShockValues(pads)) {
+        qDebug() << pads + " ATTACHED and Shock Values Set";
+        QTimer::singleShot(4000, this, SLOT(padsAttached()));
+        QTimer::singleShot(8000, led6, &LedWidget::turnOn);
+        QTimer::singleShot(8000, this, SLOT(awayFromPatient()));
+    }
+    else {
+        qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
+    }
+}
+
+
 
 
