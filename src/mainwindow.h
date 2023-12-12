@@ -39,13 +39,23 @@ private slots:
     void awayFromPatient();
     void checkCompressions();
     void takeBreaths();
+    void startCPR();
     void stopCPR();
-
-
+    void analyze();
+    void handleAnalysing();
+    void vfRhythm();
+    void shockDelivery();
+    void displayVFRhythm();
+    void vtRhythm();
+    void displayVTRhythm();
+    void asysRhythm();
+    void displayAsysRhythm();
+    void sinusRhythm();
+    void displaySinusRhythm();
 
 private:
     Ui::MainWindow *ui;
-    Battery *battery = new Battery(1000);
+    Battery *battery = new Battery(1050);
     int timeCount = 0;
     int stateCount = 1;
     LedWidget *led1;
@@ -64,5 +74,6 @@ private:
     AED *aed = new AED();
     bool powerOnButtonClicked;
     int compressionCount=0;
+    int currentShock = 0;
 };
 #endif // MAINWINDOW_H

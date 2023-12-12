@@ -8,6 +8,7 @@ public:
     Battery(int v);
     int getBattery() const;
     int reduceBattery(int v);
+    void setBattery(int v);
 
 private:
     int battery;
