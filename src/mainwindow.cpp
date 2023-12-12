@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->scenario->addItem("Choose Scenario");
     ui->scenario->addItem("1 - NORMAL SCENARIO");
     ui->scenario->addItem("2 - PADS ATTACHED");
-    ui->scenario->addItem("3 - Loose Battery");
+    ui->scenario->addItem("3 - LOOSE BATTERY");
     ui->scenario->addItem("4 - PRE TEST FAIL");
 
     //********************LED LIGHTS WIDGET*************************//
@@ -141,6 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->compression, SIGNAL(clicked()), this, SLOT(checkCompressions()));
 
     connect(ui->perform_cpr, SIGNAL (clicked()), this, SLOT (handleAnalysing()));
+
 }
 
 
@@ -217,6 +218,8 @@ void MainWindow::attachPads() {
 void MainWindow::padsAttached() {
     ui->display->setText(pads + " ATTACHED");
     ui->display->setAlignment(Qt::AlignCenter);
+    battery->reduceBattery(15);
+    qDebug() << "Battery Status:  "<< battery->getBattery();
 }
 
 void MainWindow::outOfBattery() {
@@ -347,6 +350,7 @@ void MainWindow::deviceOn() {
     timer->start(1000);
     powerOnButtonClicked = true;
     // Check if there is enough battery to provide 3 Shocks.
+    qDebug() << "Battery initialized: " << battery->getBattery();
 
     QString scenario = ui->scenario->currentText();
     if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") {
@@ -398,6 +402,9 @@ void MainWindow::deviceOn() {
         QTimer::singleShot(3000, this, SLOT(outOfBattery()));
         timer->stop();
     }
+
+    battery->reduceBattery(15);
+    qDebug() <<"Battery status: "<< battery->getBattery();
 }
 
 void MainWindow::selectPadType() {
@@ -450,6 +457,10 @@ void MainWindow::checkCompressions(){
     if(compressionCount >= 30){
         compressionCount=0;
         ui->compressionCounter->display(compressionCount);
+
+        battery->reduceBattery(15);
+        qDebug() << "Battery Status: " << battery->getBattery();
+
         QTimer::singleShot(4000, this, SLOT(takeBreaths()));
         QTimer::singleShot(10000, this, SLOT(stopCPR()));
         QTimer::singleShot(10000, led7, &LedWidget::turnOff);
@@ -498,7 +509,6 @@ void MainWindow::onPowerOffTimeout() {
         QTimer::singleShot(1000, led5, &LedWidget::turnOff);
         QTimer::singleShot(1000, led6, &LedWidget::turnOff);
         QTimer::singleShot(1000, led7, &LedWidget::turnOff);
-        QTimer::singleShot(1000, led8, &LedWidget::turnOff);
         QTimer::singleShot(1000, led9, &LedWidget::turnOff);
         QTimer::singleShot(1000, this, SLOT(resetDisplay()));
         QPixmap pix10(":/img/img/reset.png");
@@ -550,6 +560,8 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
+            battery->reduceBattery(15);
+            qDebug() << "Battery Status: " << battery->getBattery();
         }
 
         else if (detectedRhythm == "vt" && (battery->getBattery() > aed->getShock(currentShock))) {
@@ -575,6 +587,8 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
+            battery->reduceBattery(15);
+            qDebug() << "Battery Status: " << battery->getBattery();
         }
 
         else if (detectedRhythm == "Asystole" && (battery->getBattery() > aed->getShock(currentShock))) {
@@ -592,6 +606,8 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(13000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
+            battery->reduceBattery(15);
+            qDebug() << "Battery Status: " << battery->getBattery();
         }
 
         else if (detectedRhythm == "Sinus") {
@@ -601,8 +617,15 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
 
             // handle battery reduction
+            battery->reduceBattery(15);
+            qDebug() << "Battery Status: " << battery->getBattery();
 
             // handle signing off message.
+
+
+            //handle battery
+            battery->reduceBattery(0.5);
+            qDebug() << "Battery Status: " << battery->getBattery();
         }
 
         else {
@@ -614,7 +637,7 @@ void MainWindow::handleAnalysing() {
 
     }
 
-    else if (scenario == "3 - Loose Battery") {
+    else if (scenario == "3 - LOOSE BATTERY") {
         if (ui->padType->currentText() == "ADULT PADS") {
             battery->setBattery(130);
         }
@@ -648,6 +671,7 @@ void MainWindow::handleAnalysing() {
 
                 // handle battery reduction
                 battery->reduceBattery(15);
+                qDebug() << "Battery Status: " << battery->getBattery();
             }
         }
 
@@ -671,6 +695,8 @@ void MainWindow::handleAnalysing() {
                 QTimer::singleShot(3000, led7, &LedWidget::turnOn);
 
                 // handle battery reduction
+                battery->reduceBattery(15);
+                qDebug() << "Battery Status: " << battery->getBattery();
 
             }
 
