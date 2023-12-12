@@ -87,6 +87,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->compression_type->addItem("<2 inches");
     ui->compression_type->addItem("<0.75 inches");
 
+    ui->scenario->addItem("Choose Scenario");
+    ui->scenario->addItem("1 - NORMAL SCENARIO");
+    ui->scenario->addItem("2 - PADS ATTACHED");
+    ui->scenario->addItem("3 - Loose Battery");
+    ui->scenario->addItem("4 - PRE TEST FAIL");
+
     //********************LED LIGHTS WIDGET*************************//
     led1 = new LedWidget(this);
     ui->led_1->addWidget(led1);
@@ -133,6 +139,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->power_off, SIGNAL(clicked()), this, SLOT(deviceOff()));
 
     connect(ui->compression, SIGNAL(clicked()), this, SLOT(checkCompressions()));
+
+    connect(ui->perform_cpr, SIGNAL (clicked()), this, SLOT (handleAnalysing()));
 }
 
 
@@ -226,6 +234,16 @@ void MainWindow::awayFromPatient() {
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
+void MainWindow::analyze() {
+    ui->display->setText("ANALYZING");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::startCPR() {
+    ui->display->setText("START CPR");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
 void MainWindow::takeBreaths() {
     ui->display->setText("2 BREATHS");
     ui->display->setAlignment(Qt::AlignCenter);
@@ -235,6 +253,65 @@ void MainWindow::stopCPR() {
     ui->display->setText("STOP CPR");
     ui->display->setAlignment(Qt::AlignCenter);
 }
+
+
+void MainWindow::vfRhythm() {
+    ui->display->setText("Vertricular Fibrillation");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::vtRhythm() {
+    ui->display->setText("Vertricular Tachycardia");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::asysRhythm() {
+    ui->display->setText("Asystole");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::sinusRhythm() {
+    ui->display->setText("Sinus");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::shockDelivery() {
+    ui->display->setText("Delivering Shock in 3 - 2 - 1");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::displayVFRhythm() {
+    QPixmap pix14(":/img/img/vf.png");
+    int w14 = ui->ecg_label->width();
+    int h14 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
+}
+
+void MainWindow::displayVTRhythm( ) {
+    QPixmap pix14(":/img/img/vt.png");
+    int w14 = ui->ecg_label->width();
+    int h14 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
+}
+
+void MainWindow::displaySinusRhythm() {
+    QPixmap pix14(":/img/img/sinus.png");
+    int w14 = ui->ecg_label->width();
+    int h14 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
+}
+
+void MainWindow::displayAsysRhythm( ) {
+    QPixmap pix14(":/img/img/asystole.png");
+    int w14 = ui->ecg_label->width();
+    int h14 = ui->ecg_label->height();
+    ui->ecg_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
+}
+
 
 void MainWindow::handleStateSwitch() {
     if (stateCount == 1) {
@@ -261,75 +338,52 @@ void MainWindow::handleStateSwitch() {
 
 void MainWindow::deviceOn() {
     //Setting the flag to true
-    powerOnButtonClicked = true;
     //Start the timer
     timer->start(1000);
+    powerOnButtonClicked = true;
     // Check if there is enough battery to provide 3 Shocks.
-    if (battery->getBattery() >= 940 && powerOnButtonClicked) {
-        qDebug() << "Performing Self-Tests: ";
 
-        qDebug() << "BATTERY TEST: PASSED";
-        qDebug() << "DEFIBRILLATION ELECTRODED CONNECTION TEST: PASSED";
-        qDebug() << "ECG CIRCUITRY TEST: PASSED";
-        qDebug() << "CHARGE & DISCHARGE CIRCUITRY TEST: PASSED";
-        qDebug() << "MICROPROCESSOR HARDWARE/SOFTWARE TEST : PASSED";
-        qDebug() << "CPR CIRCUITRY TEST: PASSED";
+    QString scenario = ui->scenario->currentText();
+    if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") {
+//        if (stateCount == 1) {
+            qDebug() << "Performing Self-Tests: ";
+            qDebug() << "BATTERY TEST: PASSED";
+            qDebug() << "DEFIBRILLATION ELECTRODED CONNECTION TEST: PASSED";
+            qDebug() << "ECG CIRCUITRY TEST: PASSED";
+            qDebug() << "CHARGE & DISCHARGE CIRCUITRY TEST: PASSED";
+            qDebug() << "MICROPROCESSOR HARDWARE/SOFTWARE TEST : PASSED";
+            qDebug() << "CPR CIRCUITRY TEST: PASSED";
 
-        // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
-        QPixmap pix15(":/img/img/self_green.png");
-        int w15 = ui->self_test_label->width();
-        int h15 = ui->self_test_label->height();
-        ui->self_test_label->setPixmap(pix15.scaled(w15,h15,Qt::KeepAspectRatio));
+            // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
 
-        ui->display->setText("UNIT OK");
-        ui->display->setAlignment(Qt::AlignCenter);
+            ui->display->setText("UNIT OK");
+            ui->display->setAlignment(Qt::AlignCenter);
 
-        
-
-        if (!(ui->electrode_pads->isChecked())) {
+            QPixmap pix14(":/img/img/self_green.png");
+            int w14 = ui->self_test_label->width();
+            int h14 = ui->self_test_label->height();
+            ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
             QTimer::singleShot(3000, this, SLOT(stayCalm()));
 
-//            // CHECK RESPONSIVENESS
-//            QTimer::singleShot(6000, led1, &LedWidget::turnOn);
-//            QTimer::singleShot(6000, this, SLOT(checkResponsiveness()));
-//            QTimer::singleShot(11000, led1, &LedWidget::turnOff);
-//            QTimer::singleShot(11000, this, SLOT(resetDisplay()));
 
-            // CALL FOR HELP
-//            QTimer::singleShot(12000, led2, &LedWidget::turnOn);
-//            QTimer::singleShot(12000, this, SLOT(callForHelp()));
-//            QTimer::singleShot(17000, led2, &LedWidget::turnOff);
-//            QTimer::singleShot(17000, this, SLOT(resetDisplay()));
+//            if (!(ui->electrode_pads->isChecked()) && ui->padType->currentText() == "Choose pads") {
+                stateSwitchTimer->start(6000);
+//            }
 
-//            // USE PASS
-//            QTimer::singleShot(18000, led3, &LedWidget::turnOn);
-//            QTimer::singleShot(18000, this, SLOT(usePass()));
-//            QTimer::singleShot(23000, led3, &LedWidget::turnOff);
-//            QTimer::singleShot(23000, this, SLOT(resetDisplay()));
-
-//            // CHECK BREATHING
-//            QTimer::singleShot(24000, led4, &LedWidget::turnOn);
-//            QTimer::singleShot(24000, this, SLOT(checkBreathing()));
-//            QTimer::singleShot(29000, led4, &LedWidget::turnOff);
-//            QTimer::singleShot(29000, this, SLOT(resetDisplay()));
-
-//            // ATTACH PADS
-//            QTimer::singleShot(30000, led5, &LedWidget::turnOn);
-//            QTimer::singleShot(30000, this, SLOT(attachPads()));
-
-            stateSwitchTimer->start(6000);
 
         }
-        else {
-            pads = ui->padType->currentText();
-            QTimer::singleShot(3000, led5, &LedWidget::turnOn);
-            QTimer::singleShot(3000, this, SLOT(padsAttached()));
-            QTimer::singleShot(8000, led5, &LedWidget::turnOff);
-            qDebug() << "\n" << pads + " already attached -> Move to next step";
-            aed->setShockValues(pads);
-        }
+    else if (scenario == "2 - PADS ATTACHED") {
+        pads = ui->padType->currentText();
+        QTimer::singleShot(3000, led5, &LedWidget::turnOn);
+        QTimer::singleShot(3000, this, SLOT(padsAttached()));
+        QTimer::singleShot(8000, led5, &LedWidget::turnOff);
+        qDebug() << "\n" << pads + " already attached -> Move to next step";
+        aed->setShockValues(pads);
+        QTimer::singleShot(10000, led6, &LedWidget::turnOn);
+        QTimer::singleShot(10000, this, SLOT(awayFromPatient()));
     }
-    else {
+//    }
+    else if (scenario == "4 - PRE TEST FAIL"){
         QPixmap pix14(":/img/img/self_red.jpg");
         int w14 = ui->self_test_label->width();
         int h14 = ui->self_test_label->height();
@@ -341,23 +395,30 @@ void MainWindow::deviceOn() {
 }
 
 void MainWindow::selectPadType() {
-    QTimer::singleShot(3000, led5, &LedWidget::turnOff);
-    QTimer::singleShot(3000, this, SLOT(resetDisplay()));
-    pads = ui->padType->currentText();
-    if (aed->setShockValues(pads)) {
-        qDebug() << pads + " ATTACHED and Shock Values Set";
-        QTimer::singleShot(4000, this, SLOT(padsAttached()));
-        QTimer::singleShot(8000, led6, &LedWidget::turnOn);
-        QTimer::singleShot(8000, this, SLOT(awayFromPatient()));
+    if (!(ui->electrode_pads->isChecked())) {
+        QTimer::singleShot(1000, led5, &LedWidget::turnOff);
+        QTimer::singleShot(1000, this, SLOT(resetDisplay()));
+        pads = ui->padType->currentText();
+        if (aed->setShockValues(pads)) {
+            qDebug() << pads + " ATTACHED and Shock Values Set";
+            QTimer::singleShot(3000, this, SLOT(padsAttached()));
+            QTimer::singleShot(3000, led6, &LedWidget::turnOn);
+            QTimer::singleShot(8000, this, SLOT(awayFromPatient()));
+        }
+        else {
+            qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
+        }
     }
+
     else {
-        qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
+        stateCount = 5;
+        return;
     }
+
 }
 
 void MainWindow::checkCompressions(){
     QTimer::singleShot(3000, led6, &LedWidget::turnOff);
-    QTimer::singleShot(3000, this, SLOT(resetDisplay()));
     QTimer::singleShot(3000, led7, &LedWidget::turnOn);
     QString comp=ui->compression_type->currentText();
 
@@ -375,6 +436,7 @@ void MainWindow::checkCompressions(){
     }else if(comp=="<0.75 inches"){
         ui->display->setText("CONTINUE CPR");
     }
+    qDebug() << compressionCount;
     if(compressionCount >= 30){
         compressionCount=0;
         QTimer::singleShot(4000, led7, &LedWidget::turnOff);
@@ -389,16 +451,10 @@ void MainWindow::deviceOff() {
     qDebug() << "Turning AED Off";
     resetDisplay();
 
-
+    stateSwitchTimer->stop();
 
     //Set the flag to false
     powerOnButtonClicked = false;
-
-    //disconnect existing Timeout Signal if any
-    //disconnect(powerOffTimer, SIGNAL(timeout()), this, SLOT(onPowerOffTimeout()));
-
-    //connect the Timeout Signal to a new SLOT
-    //connect(powerOffTimer, SIGNAL(timeout()), this, SLOT(onPowerOffTimeout()));
 
     //Start the timer for 5 seconds
     powerOffTimer->start(5000);
@@ -411,12 +467,12 @@ void MainWindow::onPowerOffTimeout() {
     //Check if power_On Button was clicked within the 5 seconds
     if(powerOnButtonClicked){
         qDebug() << "AED is turned back on within 5 seconds";
+        stateSwitchTimer->start();
     }
     else{  
         //Reset the Elapsed Time
         timeCount = 0;
         timer->stop();
-        stateSwitchTimer->stop();
         //Turn off all the LED
         QTimer::singleShot(1000, led1, &LedWidget::turnOff);
         QTimer::singleShot(1000, led2, &LedWidget::turnOff);
@@ -427,9 +483,185 @@ void MainWindow::onPowerOffTimeout() {
         QTimer::singleShot(1000, led7, &LedWidget::turnOff);
         QTimer::singleShot(1000, led8, &LedWidget::turnOff);
         QTimer::singleShot(1000, led9, &LedWidget::turnOff);
+        QTimer::singleShot(1000, this, SLOT(resetDisplay()));
+        QPixmap pix10(":/img/img/reset.png");
+        int w10 = ui->ecg_label->width();
+        int h10 = ui->ecg_label->height();
+        ui->ecg_label->setPixmap(pix10.scaled(w10,h10,Qt::KeepAspectRatio));
+
+        QPixmap pix14(":/img/img/reset.png");
+        int w14 = ui->self_test_label->width();
+        int h14 = ui->self_test_label->height();
+        ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
         qDebug() << "AED is turned off for more than 5 seconds";
+        stateCount = 1;
+        ui->elapsedTime->display(0);
     }
 
     //Stop the timer
     powerOffTimer->stop();
+}
+
+void MainWindow::handleAnalysing() {
+    QString scenario = ui->scenario->currentText();
+    QString detectedRhythm = aed->analyzeHB();
+    if (currentShock == 3) {
+        currentShock = 0;
+    }
+    QTimer::singleShot(2000, this, SLOT(analyze()));
+    if (scenario == "1 - NORMAL SCENARIO" || scenario == "2 - PADS ATTACHED") {
+        if (detectedRhythm == "vf" && (battery->getBattery() > aed->getShock(currentShock))) {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            qDebug() << "Delivering " << aed->getShock(currentShock) << "J";
+            QTimer::singleShot(8000, this, SLOT(vfRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displayVFRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+            QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+            QTimer::singleShot(13000, led9, &LedWidget::turnOn);
+
+            // handle shock count
+            currentShock+=1;
+
+            // handle cpr stage
+            QTimer::singleShot(16000, this, SLOT(startCPR()));
+            QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+
+            // reset display on screen
+
+            // move led to cpr stage
+
+            // handle battery reduction
+        }
+
+        else if (detectedRhythm == "vt" && (battery->getBattery() > aed->getShock(currentShock))) {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            qDebug() << "Delivering " << aed->getShock(currentShock) << "J";
+            QTimer::singleShot(8000, this, SLOT(vtRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displayVTRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+            QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+            QTimer::singleShot(13000, led9, &LedWidget::turnOn);
+
+            // handle shock count
+            currentShock+=1;
+
+            // handle cpr stage
+            QTimer::singleShot(16000, this, SLOT(startCPR()));
+            QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+
+
+            // reset display on screen
+
+            // move led to cpr stage
+
+            // handle battery reduction
+        }
+
+        else if (detectedRhythm == "Asystole" && (battery->getBattery() > aed->getShock(currentShock))) {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            QTimer::singleShot(8000, this, SLOT(asysRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displayAsysRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+
+            // handle cpr stage
+            QTimer::singleShot(13000, this, SLOT(startCPR()));
+
+            // reset display on screen
+
+            // move led to cpr stage
+
+            // handle battery reduction
+        }
+
+        else if (detectedRhythm == "Sinus") {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            QTimer::singleShot(8000, this, SLOT(sinusRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displaySinusRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+
+            // handle battery reduction
+
+            // handle signing off message.
+        }
+
+        else {
+            // handle power off and switch off device.
+            ui->display->setText("BATTERY CRITTICALLY LOW");
+            deviceOff();
+            onPowerOffTimeout();
+        }
+
+    }
+
+    else if (scenario == "3 - Loose Battery") {
+        if (ui->padType->currentText() == "ADULT PADS") {
+            battery->setBattery(130);
+        }
+        else if (ui->padType->currentText() == "INFANT PADS") {
+            battery->setBattery(60);
+        }
+        if (currentShock == 0) {
+            detectedRhythm = "vf";
+        }
+        else {
+            detectedRhythm = "vt";
+        }
+        if (detectedRhythm == "vf") {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            qDebug() << "Delivering " << aed->getShock(currentShock) << "J";
+            QTimer::singleShot(8000, this, SLOT(vfRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displayVFRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+            QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+
+            if ((battery->getBattery() > aed->getShock(currentShock))) {
+                QTimer::singleShot(13000, led9, &LedWidget::turnOn);
+
+                // handle shock count
+                currentShock+=1;
+
+                // handle cpr stage
+                QTimer::singleShot(16000, this, SLOT(startCPR()));
+                QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+
+                // handle battery reduction
+                battery->reduceBattery(15);
+            }
+        }
+
+        else if (detectedRhythm == "vt") {
+            qDebug() << detectedRhythm << " rhythm detected.";
+            qDebug() << "Delivering " << aed->getShock(currentShock) << "J";
+            QTimer::singleShot(8000, this, SLOT(vtRhythm()));
+            QTimer::singleShot(8000, this, SLOT(displayVTRhythm()));
+            QTimer::singleShot(10000, led6, &LedWidget::turnOff);
+            QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+
+            if ((battery->getBattery() > aed->getShock(currentShock))) {
+                QTimer::singleShot(13000, led9, &LedWidget::turnOn);
+
+                // handle shock count
+                currentShock+=1;
+
+                // handle cpr stage
+                QTimer::singleShot(16000, this, SLOT(startCPR()));
+                QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+
+                // handle battery reduction
+
+            }
+
+            else {
+                deviceOff();
+                QTimer::singleShot(14000, this, SLOT(outOfBattery()));
+                onPowerOffTimeout();
+            }
+
+        }
+    }
+
+    else {
+        return;
+    }
 }
