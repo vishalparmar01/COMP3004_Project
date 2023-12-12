@@ -66,37 +66,13 @@ MainWindow::MainWindow(QWidget *parent)
     int h10 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix10.scaled(w10,h10,Qt::KeepAspectRatio));
 
-    /*
-    QPixmap pix11(":/img/img/asystole.png");
-    int w11 = ui->ecg_label->width();
-    int h11 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix11.scaled(w11,h11,Qt::KeepAspectRatio));
-
-    QPixmap pix12(":/img/img/vf.png");
-    int w12 = ui->ecg_label->width();
-    int h12 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix12.scaled(w12,h12,Qt::KeepAspectRatio));
-
-    QPixmap pix13(":/img/img/vt.png");
-    int w13 = ui->ecg_label->width();
-    int h13 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
-
-    QPixmap pix14(":/img/img/vt.png");
-    int w13 = ui->ecg_label->width();
-    int h13 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
-*/
-
-    //*********************************SELF TEST IMAGES************************//
+    QPixmap pix14(":/img/img/reset.png");
+    int w14 = ui->compressions_label->width();
+    int h14 = ui->compressions_label->height();
+    ui->compressions_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
 
 
-    /*
-    QPixmap pix15(":/img/img/self_green.jpeg");
-    int w15 = ui->self_test_label->width();
-    int h15 = ui->self_test_label->height();
-    ui->self_test_label->setPixmap(pix15.scaled(w15,h15,Qt::KeepAspectRatio));
-    */
+
 
     //*******************************************************************//
     
@@ -138,9 +114,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     led7 = new LedWidget(this);
     ui->led_7->addWidget(led7);
-
-    led8 = new LedWidget(this);
-    ui->led_8->addWidget(led8);
 
     led9 = new LedWidget(this);
     ui->led_9->addWidget(led9);
@@ -383,7 +356,6 @@ void MainWindow::deviceOn() {
 
             // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
 
-
             ui->display->setText("UNIT OK");
             ui->display->setAlignment(Qt::AlignCenter);
 
@@ -449,9 +421,15 @@ void MainWindow::checkCompressions(){
     QTimer::singleShot(3000, led6, &LedWidget::turnOff);
     QTimer::singleShot(3000, led7, &LedWidget::turnOn);
     QString comp=ui->compression_type->currentText();
+
+    QPixmap pix14(":/img/img/compressions.png");
+    int w14 = ui->compressions_label->width();
+    int h14 = ui->compressions_label->height();
+    ui->compressions_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+
     if(comp=="2-2.25 inches"){
         ui->display->setText("GOOD COMPRESSION");
-        compressionCount+=1;
+        compressionCount+=1;   
     }else if(comp=="<2 inches"){
         ui->display->setText("PUSH HARDER");
         compressionCount+=1;

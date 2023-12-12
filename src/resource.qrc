@@ -17,6 +17,7 @@
         <file>img/self_green.png</file>
         <file>img/self_red.jpg</file>
         <file>img/reset.png</file>
+        <file>img/compressions.png</file>
     </qresource>
     <qresource prefix="/">
         <file>img/asystole.png</file>
