@@ -29,7 +29,7 @@
     <property name="title">
      <string>User Control</string>
     </property>
-    <widget class="QPushButton" name="perform_cpr">
+    <widget class="QPushButton" name="analyse">
      <property name="geometry">
       <rect>
        <x>220</x>
