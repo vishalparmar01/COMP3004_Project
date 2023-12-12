@@ -547,6 +547,7 @@ void MainWindow::handleAnalysing() {
             // reset display on screen
 
             // move led to cpr stage
+            QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
         }
@@ -571,6 +572,7 @@ void MainWindow::handleAnalysing() {
             // reset display on screen
 
             // move led to cpr stage
+            QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
         }
@@ -587,6 +589,7 @@ void MainWindow::handleAnalysing() {
             // reset display on screen
 
             // move led to cpr stage
+            QTimer::singleShot(13000, led7, &LedWidget::turnOn);
 
             // handle battery reduction
         }
@@ -641,6 +644,7 @@ void MainWindow::handleAnalysing() {
                 // handle cpr stage
                 QTimer::singleShot(16000, this, SLOT(startCPR()));
                 QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+                QTimer::singleShot(3000, led7, &LedWidget::turnOn);
 
                 // handle battery reduction
                 battery->reduceBattery(15);
@@ -664,6 +668,7 @@ void MainWindow::handleAnalysing() {
                 // handle cpr stage
                 QTimer::singleShot(16000, this, SLOT(startCPR()));
                 QTimer::singleShot(16000, led9, &LedWidget::turnOff);
+                QTimer::singleShot(3000, led7, &LedWidget::turnOn);
 
                 // handle battery reduction
 
