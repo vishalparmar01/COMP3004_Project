@@ -71,37 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
     int h14 = ui->compressions_label->height();
     ui->compressions_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
 
-    /*
-    QPixmap pix11(":/img/img/asystole.png");
-    int w11 = ui->ecg_label->width();
-    int h11 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix11.scaled(w11,h11,Qt::KeepAspectRatio));
-
-    QPixmap pix12(":/img/img/vf.png");
-    int w12 = ui->ecg_label->width();
-    int h12 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix12.scaled(w12,h12,Qt::KeepAspectRatio));
-
-    QPixmap pix13(":/img/img/vt.png");
-    int w13 = ui->ecg_label->width();
-    int h13 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
-
-    QPixmap pix14(":/img/img/vt.png");
-    int w13 = ui->ecg_label->width();
-    int h13 = ui->ecg_label->height();
-    ui->ecg_label->setPixmap(pix13.scaled(w13,h13,Qt::KeepAspectRatio));
-*/
-
-    //*********************************SELF TEST IMAGES************************//
 
 
-    /*
-    QPixmap pix15(":/img/img/self_green.jpeg");
-    int w15 = ui->self_test_label->width();
-    int h15 = ui->self_test_label->height();
-    ui->self_test_label->setPixmap(pix15.scaled(w15,h15,Qt::KeepAspectRatio));
-    */
 
     //*******************************************************************//
     
@@ -305,15 +276,15 @@ void MainWindow::deviceOn() {
         qDebug() << "CPR CIRCUITRY TEST: PASSED";
 
         // TURN TICK SIGNAL TO GREEN -> AFTER TICK IS ADDED
-
+        QPixmap pix15(":/img/img/self_green.png");
+        int w15 = ui->self_test_label->width();
+        int h15 = ui->self_test_label->height();
+        ui->self_test_label->setPixmap(pix15.scaled(w15,h15,Qt::KeepAspectRatio));
 
         ui->display->setText("UNIT OK");
         ui->display->setAlignment(Qt::AlignCenter);
 
-        QPixmap pix14(":/img/img/reset.png");
-        int w14 = ui->self_test_label->width();
-        int h14 = ui->self_test_label->height();
-        ui->self_test_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+        
 
         if (!(ui->electrode_pads->isChecked())) {
             QTimer::singleShot(3000, this, SLOT(stayCalm()));
