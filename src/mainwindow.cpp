@@ -280,6 +280,12 @@ void MainWindow::shockDelivery() {
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
+
+void MainWindow::startAnalysing() {
+    ui->display->setText("Start Analysing");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
 void MainWindow::displayVFRhythm() {
     QPixmap pix14(":/img/img/vf.png");
     int w14 = ui->ecg_label->width();
@@ -309,7 +315,6 @@ void MainWindow::displayAsysRhythm( ) {
     int w14 = ui->ecg_label->width();
     int h14 = ui->ecg_label->height();
     ui->ecg_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
-
 }
 
 
@@ -377,10 +382,11 @@ void MainWindow::deviceOn() {
         QTimer::singleShot(3000, led5, &LedWidget::turnOn);
         QTimer::singleShot(3000, this, SLOT(padsAttached()));
         QTimer::singleShot(8000, led5, &LedWidget::turnOff);
-        qDebug() << "\n" << pads + " already attached -> Move to next step";
+        qDebug() << "\n" << pads + " already attached";
         aed->setShockValues(pads);
         QTimer::singleShot(10000, led6, &LedWidget::turnOn);
         QTimer::singleShot(10000, this, SLOT(awayFromPatient()));
+        QTimer::singleShot(11000, this, SLOT(startAnalysing()));
     }
 //    }
     else if (scenario == "4 - PRE TEST FAIL"){
@@ -404,6 +410,7 @@ void MainWindow::selectPadType() {
             QTimer::singleShot(3000, this, SLOT(padsAttached()));
             QTimer::singleShot(3000, led6, &LedWidget::turnOn);
             QTimer::singleShot(8000, this, SLOT(awayFromPatient()));
+            QTimer::singleShot(11000, this, SLOT(startAnalysing()));
         }
         else {
             qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
@@ -430,19 +437,29 @@ void MainWindow::checkCompressions(){
     if(comp=="2-2.25 inches"){
         ui->display->setText("GOOD COMPRESSION");
         compressionCount+=1;   
+        ui->compressionCounter->display(compressionCount);
     }else if(comp=="<2 inches"){
         ui->display->setText("PUSH HARDER");
         compressionCount+=1;
+        ui->compressionCounter->display(compressionCount);
     }else if(comp=="<0.75 inches"){
         ui->display->setText("CONTINUE CPR");
+        ui->compressionCounter->display(compressionCount);
     }
     qDebug() << compressionCount;
     if(compressionCount >= 30){
         compressionCount=0;
-        QTimer::singleShot(4000, led7, &LedWidget::turnOff);
+        ui->compressionCounter->display(compressionCount);
         QTimer::singleShot(4000, this, SLOT(takeBreaths()));
-        QTimer::singleShot(5000, led8, &LedWidget::turnOn);
         QTimer::singleShot(10000, this, SLOT(stopCPR()));
+        QTimer::singleShot(10000, led7, &LedWidget::turnOff);
+
+        QPixmap pix14(":/img/img/reset.png");
+        int w14 = ui->compressions_label->width();
+        int h14 = ui->compressions_label->height();
+        ui->compressions_label->setPixmap(pix14.scaled(w14,h14,Qt::KeepAspectRatio));
+        QTimer::singleShot(11000, this, SLOT(startAnalysing()));
+
     }
 }
 

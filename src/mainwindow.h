@@ -52,6 +52,7 @@ private slots:
     void displayAsysRhythm();
     void sinusRhythm();
     void displaySinusRhythm();
+    void startAnalysing();
 
 private:
     Ui::MainWindow *ui;
