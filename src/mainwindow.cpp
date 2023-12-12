@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->scenario->addItem("Choose Scenario");
     ui->scenario->addItem("1 - NORMAL SCENARIO");
     ui->scenario->addItem("2 - PADS ATTACHED");
-    ui->scenario->addItem("3 - Loose Battery");
+    ui->scenario->addItem("3 - LOOSE BATTERY");
     ui->scenario->addItem("4 - PRE TEST FAIL");
 
     //********************LED LIGHTS WIDGET*************************//
@@ -140,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->compression, SIGNAL(clicked()), this, SLOT(checkCompressions()));
 
-    connect(ui->perform_cpr, SIGNAL (clicked()), this, SLOT (handleAnalysing()));
+    connect(ui->analyse, SIGNAL (clicked()), this, SLOT (handleAnalysing()));
 }
 
 
@@ -216,6 +216,11 @@ void MainWindow::attachPads() {
 
 void MainWindow::padsAttached() {
     ui->display->setText(pads + " ATTACHED");
+    ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::detachedPads() {
+    ui->display->setText("PADS CONNECTION LOST");
     ui->display->setAlignment(Qt::AlignCenter);
 }
 
@@ -343,13 +348,14 @@ void MainWindow::handleStateSwitch() {
 
 void MainWindow::deviceOn() {
     //Setting the flag to true
+    powerOnButtonClicked = true;
+
     //Start the timer
     timer->start(1000);
-    powerOnButtonClicked = true;
-    // Check if there is enough battery to provide 3 Shocks.
 
+    // Check if there is enough battery to provide 3 Shocks.
     QString scenario = ui->scenario->currentText();
-    if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") {
+    if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") { // if battery battery greater than 970
 //        if (stateCount == 1) {
             qDebug() << "Performing Self-Tests: ";
             qDebug() << "BATTERY TEST: PASSED";
@@ -389,7 +395,7 @@ void MainWindow::deviceOn() {
         QTimer::singleShot(11000, this, SLOT(startAnalysing()));
     }
 //    }
-    else if (scenario == "4 - PRE TEST FAIL"){
+    else if (scenario == "4 - PRE TEST FAIL") {
         QPixmap pix14(":/img/img/self_red.jpg");
         int w14 = ui->self_test_label->width();
         int h14 = ui->self_test_label->height();
@@ -401,7 +407,8 @@ void MainWindow::deviceOn() {
 }
 
 void MainWindow::selectPadType() {
-    if (!(ui->electrode_pads->isChecked())) {
+    QString scenario = ui->scenario->currentText();
+    if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") {
         QTimer::singleShot(1000, led5, &LedWidget::turnOff);
         QTimer::singleShot(1000, this, SLOT(resetDisplay()));
         pads = ui->padType->currentText();
@@ -413,6 +420,7 @@ void MainWindow::selectPadType() {
             QTimer::singleShot(11000, this, SLOT(startAnalysing()));
         }
         else {
+
             qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
         }
     }
@@ -466,7 +474,6 @@ void MainWindow::checkCompressions(){
 void MainWindow::deviceOff() {
 
     qDebug() << "Turning AED Off";
-    resetDisplay();
 
     stateSwitchTimer->stop();
 
@@ -498,9 +505,9 @@ void MainWindow::onPowerOffTimeout() {
         QTimer::singleShot(1000, led5, &LedWidget::turnOff);
         QTimer::singleShot(1000, led6, &LedWidget::turnOff);
         QTimer::singleShot(1000, led7, &LedWidget::turnOff);
-        QTimer::singleShot(1000, led8, &LedWidget::turnOff);
         QTimer::singleShot(1000, led9, &LedWidget::turnOff);
         QTimer::singleShot(1000, this, SLOT(resetDisplay()));
+
         QPixmap pix10(":/img/img/reset.png");
         int w10 = ui->ecg_label->width();
         int h10 = ui->ecg_label->height();
@@ -515,7 +522,6 @@ void MainWindow::onPowerOffTimeout() {
         stateCount = 1;
         ui->elapsedTime->display(0);
     }
-
     //Stop the timer
     powerOffTimer->stop();
 }
@@ -611,10 +617,9 @@ void MainWindow::handleAnalysing() {
             deviceOff();
             onPowerOffTimeout();
         }
-
     }
 
-    else if (scenario == "3 - Loose Battery") {
+    else if (scenario == "3 - LOOSE BATTERY") {
         if (ui->padType->currentText() == "ADULT PADS") {
             battery->setBattery(130);
         }
