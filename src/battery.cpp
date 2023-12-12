@@ -10,7 +10,7 @@ int Battery::getBattery() const {
 }
 
 int Battery::reduceBattery(int v) {
-    return battery - v;
+    return battery = battery - v;
 }
 
 void Battery::setBattery(int v) {
