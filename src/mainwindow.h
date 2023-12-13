@@ -53,6 +53,7 @@ private slots:
     void sinusRhythm();
     void displaySinusRhythm();
     void startAnalysing();
+    void changeBattery();
 
 private:
     Ui::MainWindow *ui;

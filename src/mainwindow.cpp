@@ -142,6 +142,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->perform_cpr, SIGNAL (clicked()), this, SLOT (handleAnalysing()));
 
+    connect(ui->replace_battery, SIGNAL(clicked()), this, SLOT(changeBattery()));
+
 }
 
 
@@ -218,13 +220,18 @@ void MainWindow::attachPads() {
 void MainWindow::padsAttached() {
     ui->display->setText(pads + " ATTACHED");
     ui->display->setAlignment(Qt::AlignCenter);
-    battery->reduceBattery(15);
-    qDebug() << "Battery Status:  "<< battery->getBattery();
 }
 
 void MainWindow::outOfBattery() {
     ui->display->setText("UNIT FAILED: CHANGE BATTERIES");
     ui->display->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::changeBattery(){
+    ui->display->setText("BATTERY CHANGED");
+    ui->display->setAlignment(Qt::AlignCenter);
+    battery->setBattery(1050);
+    qDebug()<<"Battery Status: "<<battery->getBattery();
 }
 
 void MainWindow::resetDisplay() {
@@ -429,6 +436,8 @@ void MainWindow::selectPadType() {
         return;
     }
 
+    battery->reduceBattery(5);
+    qDebug() <<"Battery status: "<< battery->getBattery();
 }
 
 void MainWindow::checkCompressions(){
@@ -547,6 +556,12 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
             QTimer::singleShot(13000, led9, &LedWidget::turnOn);
 
+            // handle battery reduction
+            qDebug() << "Battery Status: " << battery->getBattery();
+            qDebug() << "shock Status: " << aed->getShock(currentShock);
+            battery->reduceBattery(aed->getShock(currentShock));
+            qDebug() << "Battery Status: " << battery->getBattery();
+
             // handle shock count
             currentShock+=1;
 
@@ -559,9 +574,7 @@ void MainWindow::handleAnalysing() {
             // move led to cpr stage
             QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
-            // handle battery reduction
-            battery->reduceBattery(15);
-            qDebug() << "Battery Status: " << battery->getBattery();
+           
         }
 
         else if (detectedRhythm == "vt" && (battery->getBattery() > aed->getShock(currentShock))) {
@@ -573,6 +586,14 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
             QTimer::singleShot(13000, led9, &LedWidget::turnOn);
 
+
+            // handle battery reduction
+            qDebug() << "Battery Status: " << battery->getBattery();
+            qDebug() << "shock Status: " << aed->getShock(currentShock);
+            battery->reduceBattery(aed->getShock(currentShock));
+            qDebug() << "Battery Status: " << battery->getBattery();
+
+
             // handle shock count
             currentShock+=1;
 
@@ -586,9 +607,7 @@ void MainWindow::handleAnalysing() {
             // move led to cpr stage
             QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
-            // handle battery reduction
-            battery->reduceBattery(15);
-            qDebug() << "Battery Status: " << battery->getBattery();
+         
         }
 
         else if (detectedRhythm == "Asystole" && (battery->getBattery() > aed->getShock(currentShock))) {
@@ -616,15 +635,12 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(8000, this, SLOT(displaySinusRhythm()));
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
 
-            // handle battery reduction
-            battery->reduceBattery(15);
-            qDebug() << "Battery Status: " << battery->getBattery();
 
             // handle signing off message.
 
 
             //handle battery
-            battery->reduceBattery(0.5);
+            battery->reduceBattery(15);
             qDebug() << "Battery Status: " << battery->getBattery();
         }
 
@@ -657,6 +673,11 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(8000, this, SLOT(displayVFRhythm()));
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+            // handle battery reduction
+
+            battery->reduceBattery(15);
+            qDebug() <<"Battery Status: "<< battery->getBattery();
+
 
             if ((battery->getBattery() > aed->getShock(currentShock))) {
                 QTimer::singleShot(13000, led9, &LedWidget::turnOn);
@@ -669,9 +690,6 @@ void MainWindow::handleAnalysing() {
                 QTimer::singleShot(16000, led9, &LedWidget::turnOff);
                 QTimer::singleShot(3000, led7, &LedWidget::turnOn);
 
-                // handle battery reduction
-                battery->reduceBattery(15);
-                qDebug() << "Battery Status: " << battery->getBattery();
             }
         }
 
@@ -682,6 +700,11 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(8000, this, SLOT(displayVTRhythm()));
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
+            
+            // handle battery reduction
+            
+            battery->reduceBattery(15);
+            qDebug() <<"Battery Status: "<< battery->getBattery();
 
             if ((battery->getBattery() > aed->getShock(currentShock))) {
                 QTimer::singleShot(13000, led9, &LedWidget::turnOn);
@@ -693,10 +716,6 @@ void MainWindow::handleAnalysing() {
                 QTimer::singleShot(16000, this, SLOT(startCPR()));
                 QTimer::singleShot(16000, led9, &LedWidget::turnOff);
                 QTimer::singleShot(3000, led7, &LedWidget::turnOn);
-
-                // handle battery reduction
-                battery->reduceBattery(15);
-                qDebug() << "Battery Status: " << battery->getBattery();
 
             }
 
