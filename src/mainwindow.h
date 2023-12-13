@@ -52,11 +52,9 @@ private slots:
     void sinusRhythm();
     void displaySinusRhythm();
     void startAnalysing();
-
     void changeBattery();
-
     void detachedPads();
-
+    void selfTestFailed();
 
 private:
     Ui::MainWindow *ui;
@@ -80,5 +78,6 @@ private:
     bool powerOnButtonClicked;
     int compressionCount=0;
     int currentShock = 0;
+    int shockCounter = 0;
 };
 #endif // MAINWINDOW_H
