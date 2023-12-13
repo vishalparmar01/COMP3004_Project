@@ -20,7 +20,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_electrode_pads_stateChanged(int arg1);
     void handleTime();
     void stayCalm();
     void checkResponsiveness();

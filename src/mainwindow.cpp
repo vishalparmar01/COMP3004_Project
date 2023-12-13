@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->padType->addItem("Choose pads");
     ui->padType->addItem("ADULT PADS");
     ui->padType->addItem("INFANT PADS");
+    ui->padType->addItem("PADS MISPLACED");
 
     //compressions dropbox
     ui->compression_type->addItem("Choose Depth");
@@ -153,14 +154,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_electrode_pads_stateChanged(int arg1)
-{
-    if(arg1){
-        QMessageBox::information(this, "title", "The electrode pads are placed");
-    }else{
-        QMessageBox::information(this, "title", "The electrode pads are not placed");
-    }
-}
+
 
 void MainWindow::handleTime() {
     timeCount+=1;
@@ -424,10 +418,15 @@ void MainWindow::deviceOn() {
 
 void MainWindow::selectPadType() {
     QString scenario = ui->scenario->currentText();
-    if (scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") {
+    pads = ui->padType->currentText();
+    if(pads == "PADS MISPLACED"){
+        ui->display->setText("PADS MISPLACED");
+        ui->display->setAlignment(Qt::AlignCenter);
+    }
+    else if ((scenario == "1 - NORMAL SCENARIO" || scenario == "3 - LOOSE BATTERY") && (pads != "PADS MISPLACED")) {
         QTimer::singleShot(1000, led5, &LedWidget::turnOff);
         QTimer::singleShot(1000, this, SLOT(resetDisplay()));
-        pads = ui->padType->currentText();
+
         if (aed->setShockValues(pads)) {
             qDebug() << pads + " ATTACHED and Shock Values Set";
             QTimer::singleShot(3000, this, SLOT(padsAttached()));
@@ -440,7 +439,6 @@ void MainWindow::selectPadType() {
             qDebug() << "PLEASE MAKE RIGHT PAD SELECTION";
         }
     }
-
     else {
         stateCount = 5;
         return;
@@ -549,13 +547,17 @@ void MainWindow::onPowerOffTimeout() {
 }
 
 void MainWindow::handleAnalysing() {
+
+
     QString scenario = ui->scenario->currentText();
     QString detectedRhythm = aed->analyzeHB();
     if (currentShock == 3) {
         currentShock = 0;
     }
+
     QTimer::singleShot(2000, this, SLOT(analyze()));
     if (scenario == "1 - NORMAL SCENARIO" || scenario == "2 - PADS ATTACHED") {
+
         if (detectedRhythm == "vf" && (battery->getBattery() > aed->getShock(currentShock))) {
             qDebug() << detectedRhythm << " rhythm detected.";
             qDebug() << "Delivering " << aed->getShock(currentShock) << "J";
@@ -681,10 +683,7 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(8000, this, SLOT(displayVFRhythm()));
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
-            // handle battery reduction
 
-            battery->reduceBattery(15);
-            qDebug() <<"Battery Status: "<< battery->getBattery();
 
 
             if ((battery->getBattery() > aed->getShock(currentShock))) {
@@ -696,9 +695,13 @@ void MainWindow::handleAnalysing() {
                 // handle cpr stage
                 QTimer::singleShot(16000, this, SLOT(startCPR()));
                 QTimer::singleShot(16000, led9, &LedWidget::turnOff);
-                QTimer::singleShot(3000, led7, &LedWidget::turnOn);
+                QTimer::singleShot(16000, led7, &LedWidget::turnOn);
 
             }
+            // handle battery reduction
+
+            battery->reduceBattery(15);
+            qDebug() <<"Battery Status: "<< battery->getBattery();
         }
 
         else if (detectedRhythm == "vt") {
@@ -709,10 +712,6 @@ void MainWindow::handleAnalysing() {
             QTimer::singleShot(10000, led6, &LedWidget::turnOff);
             QTimer::singleShot(10000, this, SLOT(shockDelivery()));
             
-            // handle battery reduction
-            
-            battery->reduceBattery(15);
-            qDebug() <<"Battery Status: "<< battery->getBattery();
 
             if ((battery->getBattery() > aed->getShock(currentShock))) {
                 QTimer::singleShot(13000, led9, &LedWidget::turnOn);
@@ -732,6 +731,12 @@ void MainWindow::handleAnalysing() {
                 QTimer::singleShot(14000, this, SLOT(outOfBattery()));
                 onPowerOffTimeout();
             }
+
+            // handle battery reduction
+
+            battery->reduceBattery(15);
+            qDebug() <<"Battery Status: "<< battery->getBattery();
+
 
         }
     }
