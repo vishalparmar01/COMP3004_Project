@@ -12,6 +12,7 @@ public:
 
 private:
     int battery;
+    
 };
 
 #endif // BATTERY_H
