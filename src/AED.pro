@@ -9,7 +9,6 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Display.cpp \
     LedWidget.cpp \
     aed.cpp \
     battery.cpp \
@@ -17,7 +16,6 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
-    Display.h \
     LedWidget.h \
     aed.h \
     battery.h \
